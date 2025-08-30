@@ -1,12 +1,27 @@
-import Header from "./components/Header"
-import UserInput from "./components/UserInput"
-import Result from "./components/Result";
+import { useState } from "react"
+
+import Header from "./components/Header.jsx"
+import UserInput from "./components/UserInput.jsx"
+import Result from "./components/Result.jsx";
 
 function App() {
-  let initalInvestment = 0;
-  let annualInvestment = 0;
-  let expectedReturn = 0;
-  let duration = 1;
+    const [userInput, setUserInput] = useState({
+        initialInvestment: 10000,
+        annualInvestment: 1200, 
+        expectedReturn: 6,
+        duration: 10,
+    })
+
+    const inputIsValid = userInput.duration >= 1;
+
+    function handleInput(inputIdentifier, newValue) {
+      setUserInput(prevUserInput => {
+          return {
+              ...prevUserInput,
+              [inputIdentifier]: +newValue
+          }
+      })
+    }
 
   let investmentValue = 0;
   let yearlyInterest = 0;
@@ -17,18 +32,12 @@ function App() {
     <>
       <Header />
       <UserInput
-        initalInvestment={initalInvestment} 
-        annualInvestment={annualInvestment} 
-        expectedReturn={expectedReturn} 
-        duration={duration}
+        userInput={userInput}
+        onInputChange={handleInput}
       />
-      <Result 
-        year={duration}       
-        investmentValue={investmentValue} 
-        yearlyInterest={yearlyInterest} 
-        totalInterest={totalInterest}
-        investedCapital={investedCapital}
-      />
+      {!inputIsValid && <p className="center">Please enter a duration greater than 0.</p>}
+
+      {inputIsValid &&       <Result input={userInput} />}
     </>
   )
 }
